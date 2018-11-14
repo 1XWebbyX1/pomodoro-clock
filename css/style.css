@@ -1,0 +1,177 @@
+@import url("https://fonts.googleapis.com/css?family=Francois+One");
+body, #app {
+  width: 100%;
+  height: 100vh;
+  background-image: linear-gradient(to bottom, #063f35, #013235, #0d252d, #12181f, #0b0b0c);
+  font-family: 'Francois One', sans-serif;
+}
+
+.back {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50vmax;
+  height: 90vh;
+  background: transparent;
+}
+.back #play {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  cursor: pointer;
+  font-size: 2em;
+  color: white;
+  transform: translate(-50%, -50%);
+}
+
+.label {
+  position: absolute;
+  top: 80%;
+  transform: translateX(-50%);
+  width: 20vmax;
+  height: 12vh;
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+.label .head {
+  top: 10%;
+  text-align: center;
+}
+.label .line {
+  position: absolute;
+  height: 2px;
+  border: none;
+  width: 98%;
+  top: 10%;
+  background-image: linear-gradient(to bottom, #063f35, #013235, #0d252d, #12181f, #0b0b0c);
+}
+.label .length {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2vmax;
+}
+.label .inc {
+  position: absolute;
+  top: 60%;
+  left: 35%;
+  transform: translateX(-50%);
+  font-size: 1.5vmax;
+  color: #FF6D00;
+}
+.label .dec {
+  position: absolute;
+  top: 60%;
+  left: 65%;
+  transform: translateX(-50%);
+  font-size: 1.5vmax;
+  color: #FF6D00;
+}
+
+#session-label {
+  left: 25%;
+  font-size: 1.2vmax;
+}
+
+#break-label {
+  left: 75% !important;
+  font-size: 1.2vmax;
+}
+
+.clock {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 18vmax;
+  height: 30vh;
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  color: white;
+  box-shadow: 0px 3px 5px rgba(244, 244, 244, 0.3) inset;
+  transition: all 1s ease-in-out;
+}
+.clock #time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 4em;
+}
+.clock #text {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.clock .refresh {
+  position: absolute;
+  top: 88%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2vmax;
+}
+
+.beat-animation {
+  animation: beat 2s infinite;
+}
+
+@keyframes beat {
+  0% {
+    transform: scale(1) translate(-50%, -50%);
+  }
+  50% {
+    transform: scale(1.2) translate(-40%, -50%);
+  }
+  100% {
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
+@media only screen and (max-width: 800px) {
+  body .clock {
+    top: 45%;
+    width: 35vmax;
+    height: 35vh;
+    border-width: 2px !important;
+  }
+  body .clock .refresh {
+    font-size: 3.2vmax;
+  }
+  body .clock #time {
+    font-size: 3em;
+  }
+
+  body .back {
+    top: 2%;
+  }
+  body .back #play {
+    top: 20%;
+  }
+
+  .back .label {
+    width: 30vmax;
+  }
+  .back .label .length {
+    font-size: 3.2vmax;
+  }
+  .back .label .inc {
+    font-size: 2.5vmax;
+    left: 30%;
+  }
+  .back .label .dec {
+    font-size: 2.5vmax;
+    left: 70%;
+  }
+
+  .back #session-label {
+    left: 15%;
+    font-size: 2.2vmax;
+  }
+
+  .back #break-label {
+    left: 85% !important;
+    font-size: 2.2vmax;
+  }
+}

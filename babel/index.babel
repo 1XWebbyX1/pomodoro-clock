@@ -1,0 +1,383 @@
+//REDUX___________________________________________________________________________ ;
+
+const PLAY = 'PLAY';
+const BREAK = 'BREAK';
+const UPDATE = 'UPDATE';
+const REFRESH= 'REFRESH';
+const initialState = {
+      breakLength: 5,    //var for length of break
+      sessionLength: 25, //var for length of session
+      time: '25:00',   //time-left
+      play: true,     //boolean to detect play or pause state
+      break: false     //boolean to detect break or session
+}
+
+
+//action creaters_____________________________________________________________________
+function playState(play, time) {
+  return {
+    type: PLAY,
+    play: play,
+    time: time
+  };
+}
+
+function breakState(breakk) {
+  return {
+    type: BREAK,
+    break: breakk
+  }
+}
+
+function updateLength(breakLength, sessionLength, time) {
+  return {
+    type: UPDATE,
+    breakLength: breakLength,
+    sessionLength: sessionLength,
+    time: time
+  }
+}
+
+function refresh(){
+  return{
+    type: REFRESH
+  }
+}
+//-------------------------------------------------------------------------------------
+
+
+//reducer for action creaters_____________________________________________________________
+function reducer(state=initialState, action) {
+  switch(action.type){
+    case PLAY : return {breakLength: state.breakLength, sessionLength: state.sessionLength, time: action.time, play: action.play, break: state.break};
+    case BREAK : return {breakLength: state.breakLength, sessionLength: state.sessionLength, time: state.time, play: state.play, break: action.break};
+    case UPDATE : return {breakLength: action.breakLength, sessionLength: action.sessionLength, time: action.time, play: state.play, break: state.break};
+    case REFRESH: return {breakLength: 5, sessionLength: 25, time: "25:00", play: true, break: false};
+    default : return state;
+  }
+}
+//----------------------------------------------------------------------------------------------
+
+
+//REdux store-------------------------------------------
+
+const store = Redux.createStore(reducer);
+//-------------------------------------------------------------------------------------------
+
+
+
+
+
+//REACT__________________________________________
+
+
+//Clock Component_____________________________________________
+class Clock extends React.Component {
+    render() {
+      return (
+        <div class="clock">
+          <p id='text'>SESSION</p>
+          <time id='time'>{this.props.time}</time>
+          <i onClick={this.props.onClick} class="refresh fa fa-refresh" aria-hidden="true"></i>
+        </div>
+      );
+    }
+}
+//-------------------------------------------------------------
+
+//Label Component for session and break length______________________________________________
+class Label extends React.Component {
+  render() {
+    return(
+      <div id={this.props.id} class='label'>
+        <p class='head'>{this.props.text}</p>
+        <hr class='line' />
+        <p class='length'>{this.props.length}</p>
+        <i id='inc' class="inc fa fa-plus" onClick={this.props.onClick} aria-hidden="true"></i>
+        <i class="dec fa fa-minus" onClick={this.props.onClick} aria-hidden="true"></i>
+      </div>
+    );
+  }
+}
+
+
+
+
+
+//main component rendering everything together________________________________________________
+class Back extends React.Component {
+  constructor(props){
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handlePlay = this.handlePlay.bind(this);
+    this.handleRefresh = this.handleRefresh.bind(this);
+    this.switch = this.switch.bind(this);
+    this.timer = this.timer.bind(this);
+    this.genTime = this.genTime.bind(this);
+  }
+  
+  
+  //generate time string from minutes and seconds----------------------
+  genTime(minutes, seconds) {
+    time = '' + minutes + ':' + seconds;
+    return time;
+  }
+ //------------------------------------------------------------------
+  
+  
+  
+  
+  
+  //switch between session and break_____________________________________________________________________
+  switch() {
+         this.stopAnimation();
+         clearInterval(this.timer); //clear current running interval
+         
+         this.props.mapBreakState(!this.props.break); //update break state with boolean negation
+         
+        //update text and time with break state
+        this.props.break ? $('#text').text('BREAK') : $('#text').text('SESSION');
+        this.props.break ? time = this.genTime(this.props.breakLength, "00") :  time = this.genTime(this.props.sessionLength, "00");
+        
+
+        this.props.mapPlayState(this.props.play, time); //update time state
+        this.start();//setting an interval again with new time
+   }
+   //------------------------------------------------------------------------------------------------------
+  
+  
+  
+  
+  
+  
+  
+  //the timer function responsible for time left component __________________________________________________
+  //called every second
+   timer() {  
+        seconds = Number(this.props.time.split(':')[1]); //get current time in seconds and minutes
+        minutes = Number(this.props.time.split(':')[0]);
+        regex = /^\d{2}$/;                                //regex to check double digit
+      
+      
+     
+       //if timer reaches end -- switch
+       if(minutes == 0 && seconds == 0){  
+         this.switch();
+       }
+      //--------
+      
+      
+      //if timer is not ending --update seconds and minutes
+      if(seconds != 0  ){
+          seconds -= 1;
+        }else {
+           seconds = 59;   //to create a cycle starting from 59
+           minutes = minutes - 1; // minutes will be updated when seconds come to 0
+        } 
+        
+      
+      //update time string depending on double or single digit seconds__
+        if(regex.test(seconds)){
+           //ternary expression to check if minutes are single or double digit
+          regex.test(minutes) ? time = this.genTime(minutes, seconds) : time = this.genTime('0' + minutes, seconds);
+        }
+        else {
+          //ternary expression to check if minutes are single or double digit
+          regex.test(minutes) ? time = this.genTime(minutes,'0' + seconds) : time = this.genTime('0' + minutes,'0' + seconds);
+        }
+      //-----------------------
+      
+     
+     //update the time state
+       this.props.mapPlayState(this.props.play, time);
+      
+      
+      
+      
+      this.animate = function() {
+        $('.clock').css('border', '4px solid #013235');
+        $('.clock').css('box-shadow', '0px 3px 5px #FF6D00 inset');
+        if(minutes == 0 && !this.props.play) {
+          $('#time').addClass('beat-animation');
+        }
+      }
+      
+      
+      this.stopAnimation = function() {
+        $('.clock').css('border', '4px solid #0d252d');
+        $('.clock').css('box-shadow', '0px 3px 5px rgba(244, 244, 244, 0.3) inset');
+        $('#time').removeClass('beat-animation');
+      }
+      
+      
+      //animation when time is less than 10 minutes
+      if(!regex.test(minutes)){
+         this.animate();
+      }
+      else{
+        this.stopAnimation();
+      }
+    }
+    //--------------------------------------------------------------------------------------------------
+
+
+
+  
+  
+  
+  
+  
+  //handle Play button click___________________________________________________________________
+  handlePlay(){
+    (this.props.play) ? $('.fa-play').removeClass('fa-play').addClass('fa-pause', 200) :  $('.fa-pause').removeClass('fa-pause').addClass('fa-play', 200); // toggle play pause button
+    this.props.mapPlayState(!this.props.play, this.props.time);         //toogle play-pause on click 
+   
+    this.animate;
+    this.stopAnimation;
+    
+    //set up an interval for timer function 
+    if(this.props.play){
+      this.start = setInterval(function() {
+         this.timer()
+      }.bind(this), 1000);  //update seconds every second
+     }
+    else{
+      clearInterval(this.start); //if pause state -- clear the interval and stop animation
+      $('#time').removeClass('beat-animation');
+    }
+ }
+  
+  //---------------------------------------------------------------------------------------------------
+  
+  
+  
+  //handle change of session or break length on label___________________________________________________________
+  handleChange(e){
+    targetId = e.target.id; //get the id of icon that was clicked
+    parentId = e.target.parentElement.id;// get the id of its parent (session/ break)
+    currentBr = this.props.breakLength; //get current length of break and session
+    currentSe = this.props.sessionLength;
+    
+    //active only when clock is paused______________________________________________________________-
+    if(this.props.play){
+    //if id is for increment_________________________________________________________________
+    if(targetId == 'inc'){
+      if(parentId == 'session-label'){
+        //increment only if length is between 0 and 60
+        if(currentSe >= 0 && currentSe < 60){
+          //update session time only when not on break
+          (!this.props.break) ? time = this.genTime(this.props.sessionLength + 1, '00') : time = this.props.time;
+          // send update to store
+          this.props.mapUpdate(this.props.breakLength, this.props.sessionLength + 1, time);
+        }
+      }
+      else{ // for break-label
+       if(currentBr >= 0 && currentBr < 60){
+          // update time on break and change in break length
+          (!this.props.break) ? time = this.props.time : time = this.genTime(this.props.breakLength + 1, '00');
+          this.props.mapUpdate(this.props.breakLength + 1, this.props.sessionLength, time);
+        }
+      }
+    } else{
+      if(parentId == 'session-label'){
+        //decrement only if length is between 0 and 60
+        if(currentSe > 0 && currentSe <= 60){
+          //update time only if not on break
+          (!this.props.break) ? time = this.genTime(this.props.sessionLength - 1, '00') : time = this.props.time;
+         // update time witch change in session length
+          this.props.mapUpdate(this.props.breakLength, this.props.sessionLength - 1, time);
+        }
+      }
+      else{ //for break-label
+        if(currentBr > 0 && currentBr <= 60){
+          //update time on break and change in break length
+          (!this.props.break) ?  time = this.props.time : time = this.genTime(this.props.breakLength - 1, '00');
+          this.props.mapUpdate(this.props.breakLength - 1, this.props.sessionLength, time);
+        }
+      }
+     }
+    }
+  }
+  
+  
+  
+  //refresh to initial state___________________________________________________
+  handleRefresh(){
+    $('#text').text('SESSION');
+    $('.fa-pause').removeClass('fa-pause').addClass('fa-play', 200);
+    this.stopAnimation();
+    $('.clock').css('border', '4px solid #0d252d')
+    clearInterval(this.start);
+    this.props.reload();
+    
+  }
+  //----------------------------------------------------------------------------
+  
+  
+  render() {
+    return (
+      <div class='back'>
+        <i id='play' class="fa fa-play" aria-hidden="true" onClick={this.handlePlay}></i>
+        <Label id='session-label' text='SESSION LENGTH' length={this.props.sessionLength} onClick={this.handleChange}/>
+        <Label id='break-label' text='BREAK LENGTH' length={this.props.breakLength} onClick={this.handleChange}/>
+        <Clock time={this.props.time} onClick={this.handleRefresh}/>
+      </div>
+    )
+  }
+}
+
+
+//mapping props from Redux state store___________________________________________
+const mapStateToProps = (state)  => {
+  return {
+    breakLength: state.breakLength,
+    sessionLength: state.sessionLength,
+    time: state.time,
+    play: state.play,
+    break: state.break
+  };
+};
+//---------------------------------------------------------------------------------
+
+//dispatch changes to redux_____________________________________________________________
+const mapDispatchToProps = (dispatch) => {
+  return {
+    mapPlayState : function(play,time) {
+        dispatch(playState(play, time));
+     },
+    mapBreakState :  function(breakk) {
+        dispatch(breakState(breakk));
+     },
+    mapUpdate :  function(breakLength, sessionLength, time) {
+        dispatch(updateLength(breakLength, sessionLength, time));
+     },
+    reload : function() { console.log('m');
+        dispatch( refresh());
+     }
+  };
+};
+//------------------------------------------------------------------------------------------
+
+const connect = ReactRedux.connect;
+
+const Container = connect(mapStateToProps, mapDispatchToProps)(Back);
+
+//create a provider --------
+const Provider = ReactRedux.Provider;
+
+class AppWrapper extends React.Component{
+  render() {
+    return(
+      <Provider store={store}>
+        <Container />
+      </Provider>
+    )
+  }
+}
+
+
+
+
+//render the app________________________________________________
+ReactDOM.render(<AppWrapper />, document.getElementById('app'));
+
