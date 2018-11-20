@@ -35,11 +35,13 @@ body, #app{
   transform: translateX(-50%);
   width: 20vmax;
   height: 12vh;
+  color: #a6a6a6;
   background: rgba(0,0,0, 0.3) !important;
   
   .head{
     top: 10%;
     text-align: center;
+    cursor: default;
   }
   
   .line{
@@ -53,28 +55,31 @@ body, #app{
   
   .length{
      position: absolute;
-     top: 60%;
+     top: 40%;
      left: 50%;
      transform: translateX(-50%);
     font-size: 2vmax;
+    cursor: default;
   }
   
   .inc{
     position: absolute;
-    top: 60%;
+    top: 50%;
     left: 35%;
     transform: translateX(-50%);
     font-size: 1.5vmax;
     color: #FF6D00;
+    cursor: pointer;
   }
   
   .dec{
     position: absolute;
-    top: 60%;
+    top: 50%;
     left: 65%;
     transform: translateX(-50%);
     font-size: 1.5vmax;
     color: #FF6D00;
+    cursor: pointer;
   }
 }
 
@@ -108,13 +113,16 @@ body, #app{
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 4em;
+    cursor: default;
   }
   
   #text{
     position: absolute;
     top: 10%;
     left: 50%;
+    font-size: 1em;
     transform: translateX(-50%);
+    cursor: default;
   }
   
   .refresh{
@@ -123,6 +131,7 @@ body, #app{
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2vmax;
+    cursor: pointer;
   }
 }
 
@@ -148,12 +157,16 @@ body, #app{
   //for phones and tablets
   body .clock{
     top: 45%;
-    width: 35vmax;
+    width: 38vmax;
     height: 35vh;
     border-width: 2px !important;
     
     .refresh{
       font-size: 3.2vmax;
+    }
+    
+    #text{
+      font-size: 0.7em;
     }
     
     #time{
@@ -165,6 +178,7 @@ body, #app{
     
     #play{
       top: 20%;
+      font-size: 1.4em;
     }
   }
   .back .label{
@@ -192,5 +206,19 @@ body, #app{
    .back #break-label{
     left: 85% !important;
      font-size: 2.2vmax;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 800px){
+    
+  body{
+    
+   .back #play{
+      font-size: 1.8em;
+    }
+    
+    .clock #text{
+      font-size: 1em;
+    }
   }
 }

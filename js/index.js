@@ -137,7 +137,7 @@ var Back = function (_React$Component3) {_inherits(Back, _React$Component3);
 
       //update text and time with break state
       this.props.break ? $('#text').text('BREAK') : $('#text').text('SESSION');
-      this.props.break ? time = this.genTime(this.props.breakLength, "00") : time = this.genTime(this.props.sessionLength, "00");
+      time = this.props.break ? this.genTime(this.props.breakLength, "00") : this.genTime(this.props.sessionLength, "00");
 
 
       this.props.mapPlayState(this.props.play, time); //update time state
@@ -179,11 +179,11 @@ var Back = function (_React$Component3) {_inherits(Back, _React$Component3);
       //update time string depending on double or single digit seconds__
       if (regex.test(seconds)) {
         //ternary expression to check if minutes are single or double digit
-        regex.test(minutes) ? time = this.genTime(minutes, seconds) : time = this.genTime('0' + minutes, seconds);
+        time = regex.test(minutes) ? this.genTime(minutes, seconds) : this.genTime('0' + minutes, seconds);
       } else
       {
         //ternary expression to check if minutes are single or double digit
-        regex.test(minutes) ? time = this.genTime(minutes, '0' + seconds) : time = this.genTime('0' + minutes, '0' + seconds);
+        time = regex.test(minutes) ? this.genTime(minutes, '0' + seconds) : this.genTime('0' + minutes, '0' + seconds);
       }
       //-----------------------
 
@@ -229,8 +229,10 @@ var Back = function (_React$Component3) {_inherits(Back, _React$Component3);
 
     //handle Play button click___________________________________________________________________
   }, { key: 'handlePlay', value: function handlePlay() {
-      this.props.play ? $('.fa-play').removeClass('fa-play').addClass('fa-pause', 200) : $('.fa-pause').removeClass('fa-pause').addClass('fa-play', 200); // toggle play pause button
-      this.props.mapPlayState(!this.props.play, this.props.time); //toogle play-pause on click 
+      // toggle play pause button
+      $('#play').toggleClass('fa-play');
+      $('#play').toggleClass('fa-pause');
+      this.props.mapPlayState(!this.props.play, this.props.time); //toogle play-pause boolean on click 
 
       this.animate;
       this.stopAnimation;
@@ -266,7 +268,7 @@ var Back = function (_React$Component3) {_inherits(Back, _React$Component3);
             //increment only if length is between 0 and 60
             if (currentSe >= 0 && currentSe < 60) {
               //update session time only when not on break
-              !this.props.break ? time = this.genTime(this.props.sessionLength + 1, '00') : time = this.props.time;
+              time = !this.props.break ? this.genTime(this.props.sessionLength + 1, '00') : this.props.time;
               // send update to store
               this.props.mapUpdate(this.props.breakLength, this.props.sessionLength + 1, time);
             }
@@ -274,7 +276,7 @@ var Back = function (_React$Component3) {_inherits(Back, _React$Component3);
           {// for break-label
             if (currentBr >= 0 && currentBr < 60) {
               // update time on break and change in break length
-              !this.props.break ? time = this.props.time : time = this.genTime(this.props.breakLength + 1, '00');
+              time = !this.props.break ? this.props.time : this.genTime(this.props.breakLength + 1, '00');
               this.props.mapUpdate(this.props.breakLength + 1, this.props.sessionLength, time);
             }
           }
@@ -283,7 +285,7 @@ var Back = function (_React$Component3) {_inherits(Back, _React$Component3);
             //decrement only if length is between 0 and 60
             if (currentSe > 0 && currentSe <= 60) {
               //update time only if not on break
-              !this.props.break ? time = this.genTime(this.props.sessionLength - 1, '00') : time = this.props.time;
+              time = !this.props.break ? this.genTime(this.props.sessionLength - 1, '00') : this.props.time;
               // update time witch change in session length
               this.props.mapUpdate(this.props.breakLength, this.props.sessionLength - 1, time);
             }
@@ -291,7 +293,7 @@ var Back = function (_React$Component3) {_inherits(Back, _React$Component3);
           {//for break-label
             if (currentBr > 0 && currentBr <= 60) {
               //update time on break and change in break length
-              !this.props.break ? time = this.props.time : time = this.genTime(this.props.breakLength - 1, '00');
+              time = !this.props.break ? this.props.time : this.genTime(this.props.breakLength - 1, '00');
               this.props.mapUpdate(this.props.breakLength - 1, this.props.sessionLength, time);
             }
           }
